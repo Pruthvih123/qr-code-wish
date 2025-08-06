@@ -13,7 +13,7 @@ import { toPng } from "html-to-image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Helper to read URL query parameters
+// Helper hook to extract query params from URL
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
@@ -24,11 +24,16 @@ const QRCodeWithForm = () => {
   const scannedMobile = query.get("mobile");
   const scannedMessage = query.get("message");
 
-  const [formData, setFormData] = useState({ name: "", mobile: "", message: "" });
+  const isScannedMode = scannedName && scannedMobile && scannedMessage;
+
+  const [formData, setFormData] = useState({
+    name: "",
+    mobile: "",
+    message: "",
+  });
+
   const [showQR, setShowQR] = useState(false);
   const qrRef = useRef(null);
-
-  const isScannedMode = scannedName && scannedMobile && scannedMessage;
 
   useEffect(() => {
     if (isScannedMode) {
@@ -50,7 +55,7 @@ const QRCodeWithForm = () => {
       setShowQR(true);
       toast.success("QR code generated successfully!");
     } else {
-      toast.error("Please fill name, valid mobile number, and a message");
+      toast.error("Please fill name, valid 10-digit mobile number, and message.");
       setShowQR(false);
     }
   };
@@ -76,7 +81,7 @@ const QRCodeWithForm = () => {
     <Box
       sx={{
         p: 4,
-        maxWidth: 400,
+        maxWidth: 450,
         margin: "auto",
         mt: 5,
         textAlign: "center",
@@ -109,7 +114,7 @@ const QRCodeWithForm = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Click here to open this info again
+              Click here to revisit
             </Link>
           </Typography>
         </>
@@ -166,8 +171,9 @@ const QRCodeWithForm = () => {
               <Button variant="outlined" sx={{ mt: 2 }} onClick={handleDownload}>
                 Download QR Code
               </Button>
+
               <Typography variant="body2" sx={{ mt: 1 }}>
-                🔗 Scannable URL:{" "}
+                🔗 Link:{" "}
                 <Link href={qrUrl} target="_blank" rel="noopener noreferrer">
                   {qrUrl}
                 </Link>
